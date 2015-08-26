@@ -1,0 +1,6 @@
+
+target 'Placeholder_Example', :exclusive => true do
+  pod "Placeholder", :path => "../"
+end
+
+ 

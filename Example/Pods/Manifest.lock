@@ -1,0 +1,14 @@
+PODS:
+  - Placeholder (0.1.0)
+
+DEPENDENCIES:
+  - Placeholder (from `../`)
+
+EXTERNAL SOURCES:
+  Placeholder:
+    :path: ../
+
+SPEC CHECKSUMS:
+  Placeholder: 77bacefdbb6e527ea1c4ea8c1990763d5054aed5
+
+COCOAPODS: 0.35.0
