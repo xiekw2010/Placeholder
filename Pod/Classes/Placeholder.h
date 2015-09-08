@@ -23,6 +23,7 @@ typedef void (^PlaceholderBlock)(NSArray *models, NSError *error);
 + (NSString *)textWithRange:(NSRange)range;
 + (UIImage *)imageWithSize:(CGSize)size;
 + (NSString *)imageURL;
++ (NSString *)paragraph;
 
 @end
 
@@ -60,6 +61,7 @@ typedef void (^PlaceholderBlock)(NSArray *models, NSError *error);
 @property (nonatomic, strong) PHFeedUser *user;
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *subTitle;
+@property (nonatomic, strong) NSString *content;
 @property (nonatomic, strong) NSArray *tags;
 @property (nonatomic, strong) NSArray *comments;
 @property (nonatomic, strong) NSArray *imageURLs;

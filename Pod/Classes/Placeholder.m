@@ -86,28 +86,55 @@ static inline NSDateFormatter *dateFormatter() {
 
 @implementation Placeholder
 
-+ (NSArray *)kImageURLS {
++ (NSArray *)textPlaceholders {
     static dispatch_once_t onceToken;
-    static NSArray *imageURLs;
+    static NSArray *texts;
     dispatch_once(&onceToken, ^{
-        imageURLs = @[@"http://g.hiphotos.baidu.com/image/h%3D360/sign=fdcf1ae05eafa40f23c6c8db9b65038c/562c11dfa9ec8a13ed18fa32f303918fa1ecc0e6.jpg",
-                      @"http://b.hiphotos.baidu.com/image/h%3D360/sign=19e72ad5d02a28345ca6300d6bb7c92e/e61190ef76c6a7efb7a592eef9faaf51f2de6672.jpg",
-                      @"http://d.hiphotos.baidu.com/image/h%3D360/sign=c6bc69d576f08202329297397bf9fb8a/63d9f2d3572c11dfc21b32d5662762d0f603c27a.jpg",
-                      @"http://f.hiphotos.baidu.com/image/h%3D360/sign=1c9a50843ec79f3d90e1e2368aa0cdbc/f636afc379310a5566becb8fb24543a982261036.jpg",
-                      @"http://f.hiphotos.baidu.com/image/h%3D360/sign=c3596956f4246b60640eb472dbf81a35/b90e7bec54e736d1527ebb0d99504fc2d5626941.jpg",
-                      @"http://g.hiphotos.baidu.com/image/w%3D310/sign=cf2be2c63ddbb6fd255be3273925aba6/8b82b9014a90f603ed7cca7a3d12b31bb051ed3b.jpg",
-                      @"http://b.hiphotos.baidu.com/image/w%3D310/sign=69a9abb2249759ee4a5066ca82fa434e/d439b6003af33a878803cfa5c45c10385343b527.jpg",
-                      @"http://d.hiphotos.baidu.com/image/w%3D310/sign=6a067b15ab014c08193b2ea43a7a025b/bf096b63f6246b608f1144c8e9f81a4c510fa26b.jpg",
-                      @"http://h.hiphotos.baidu.com/image/w%3D310/sign=fd959d3de9c4b7453494b117fffd1e78/0bd162d9f2d3572ce61f87c88813632762d0c321.jpg"
-                      ];
+        texts = @[
+                         @"Kitty ipsum dolor sit amet, purr sleep on your face lay down in your way biting, sniff tincidunt a etiam fluffy fur judging you stuck in a tree kittens.",
+                         @"Lick tincidunt a biting eat the grass, egestas enim ut lick leap puking climb the curtains lick.",
+                         @"Lick quis nunc toss the mousie vel, tortor pellentesque sunbathe orci turpis non tail flick suscipit sleep in the sink.",
+                         @"Orci turpis litter box et stuck in a tree, egestas ac tempus et aliquam elit.",
+                         @"Hairball iaculis dolor dolor neque, nibh adipiscing vehicula egestas dolor aliquam.",
+                         @"Sunbathe fluffy fur tortor faucibus pharetra jump, enim jump on the table I don't like that food catnip toss the mousie scratched.",
+                         @"Quis nunc nam sleep in the sink quis nunc purr faucibus, chase the red dot consectetur bat sagittis.",
+                         @"Lick tail flick jump on the table stretching purr amet, rhoncus scratched jump on the table run.",
+                         @"Suspendisse aliquam vulputate feed me sleep on your keyboard, rip the couch faucibus sleep on your keyboard tristique give me fish dolor.",
+                         @"Rip the couch hiss attack your ankles biting pellentesque puking, enim suspendisse enim mauris a.",
+                         @"Sollicitudin iaculis vestibulum toss the mousie biting attack your ankles, puking nunc jump adipiscing in viverra.",
+                         @"Nam zzz amet neque, bat tincidunt a iaculis sniff hiss bibendum leap nibh.",
+                         @"Chase the red dot enim puking chuf, tristique et egestas sniff sollicitudin pharetra enim ut mauris a.",
+                         @"Sagittis scratched et lick, hairball leap attack adipiscing catnip tail flick iaculis lick.",
+                         @"Neque neque sleep in the sink neque sleep on your face, climb the curtains chuf tail flick sniff tortor non.",
+                         @"Ac etiam kittens claw toss the mousie jump, pellentesque rhoncus litter box give me fish adipiscing mauris a.",
+                         @"Pharetra egestas sunbathe faucibus ac fluffy fur, hiss feed me give me fish accumsan.",
+                         @"Tortor leap tristique accumsan rutrum sleep in the sink, amet sollicitudin adipiscing dolor chase the red dot.",
+                         @"Knock over the lamp pharetra vehicula sleep on your face rhoncus, jump elit cras nec quis quis nunc nam.",
+                         @"Sollicitudin feed me et ac in viverra catnip, nunc eat I don't like that food iaculis give me fish.",
+                         ];
     });
-    return imageURLs;
+    return texts;
 }
 
 + (NSString *)textWithRange:(NSRange)range {
     NSUInteger min = range.location;
     NSUInteger max = range.length;
     return RandomTextWithRange(min, max, kEnglishContent);
+}
+
++ (NSString *)paragraph {
+    NSArray *placeholders = [self textPlaceholders];
+    u_int32_t ipsumCount = (u_int32_t)[placeholders count];
+    u_int32_t location = arc4random_uniform(ipsumCount);
+    u_int32_t length = arc4random_uniform(ipsumCount - location);
+    
+    NSMutableString *string = [placeholders[location] mutableCopy];
+    for (u_int32_t i = location + 1; i < location + length; i++) {
+        [string appendString:(i % 2 == 0) ? @"\n" : @"  "];
+        [string appendString:placeholders[i]];
+    }
+    
+    return string;
 }
 
 + (UIImage *)imageWithSize:(CGSize)size {
@@ -124,9 +151,15 @@ static inline NSDateFormatter *dateFormatter() {
     return image;
 }
 
+// lorem ipsum text courtesy http://kittyipsum.com/ <3
 + (NSString *)imageURL {
-    NSArray *imageURLs = [self kImageURLS];
-    return imageURLs[arc4random_uniform((u_int32_t)imageURLs.count)];
+    u_int32_t deltaX = arc4random_uniform(10) - 5;
+    u_int32_t deltaY = arc4random_uniform(10) - 5;
+    CGSize size = CGSizeMake(350 + 2 * deltaX, 350 + 4 * deltaY);
+    
+    NSString *imageURL = [NSString stringWithFormat:@"http://placekitten.com/%zd/%zd", (NSInteger)roundl(size.width),                         (NSInteger)roundl(size.height)];
+    
+    return imageURL;
 }
 
 @end
@@ -179,7 +212,7 @@ static inline NSDateFormatter *dateFormatter() {
     PHFeedComment *comment = [[self class] new];
     comment.user = [PHFeedUser randomModel];
     comment.commentDate = [dateFormatter() stringFromDate:[NSDate date]];
-    comment.commentContent = RandomTextWithRange(8, 140, kEnglishContent);
+    comment.commentContent = [Placeholder paragraph];
     comment.imageURLs = RandomBool() ? RandomObjectArrayWithRandomCountBetween(2, 9, ^id{
         return [Placeholder imageURL];
     }) : nil;
@@ -197,6 +230,7 @@ static inline NSDateFormatter *dateFormatter() {
     model.originPrice = RandomFloatBetweenLowAndHigh(50.0, 10000.0);
     model.currentPrice = RandomFloatBetweenLowAndHigh(50, model.originPrice);
     model.soldedCount = RandomIntBetweenLowAndHigh(50, 100000);
+    model.content = [Placeholder paragraph];
     model.title = RandomTextWithRange(10, 50, kEnglishContent);;
     model.subTitle = RandomTextWithRange(30, 200.0, kEnglishContent);
     model.tags = RandomObjectArrayWithRandomCountBetween(4, 10, ^id{
